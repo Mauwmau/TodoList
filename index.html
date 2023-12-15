@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO-DO LIST</title>
+</head>
+<body>
+    <script src="scripts.js"></script>
+    <h1>This is a to-do list</h1>
+
+    <form id="fform">
+        <label for="chorename" form="fform">Nova atividade:</label>
+        <input type="text" name="Nome da atividade" id="chorename">
+        <input type="submit" value="Adicionar" />
+    </form>
+
+    <ul id="mylist">
+        <!-- <li>
+            <input type="checkbox" name="todobox" id="b00">
+            <input type="text" name="todoname" id="n00" readonly>
+        </li> -->
+    </ul>
+    <script>
+        let myForm = document.getElementById("fform")
+        myForm.addEventListener("submit",event => {
+            event.preventDefault()
+            handleSubmit()
+        })
+    </script>
+</body>
+</html>
