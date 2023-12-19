@@ -51,19 +51,33 @@ function addToDo(itemobj) {
         let newitembox = document.createElement("INPUT")
         newitembox.setAttribute("type", "checkbox")
         newitembox.setAttribute("value", false)
-        newitembox.addEventListener("input", () => {removeTodo(customid)})
+        newitembox.addEventListener("input", () => {toggleVisibility(customid, id)})
 
         let newitemname = document.createElement("P")
         newitemname.innerHTML = description
+
+        let deletebutton = document.createElement("BUTTON")
+        deletebutton.addEventListener("click", () => {removeTodo(customid)})
+        deletebutton.innerHTML = "Apagar tarefa"
 
         let licontainer = document.createElement("LI")
         licontainer.id = customid
         licontainer.appendChild(newitembox)
         licontainer.appendChild(newitemname)
+        licontainer.appendChild(deletebutton)
 
         let domList = document.getElementById("mylist")
         domList.appendChild(licontainer)
     }
+}
+
+function toggleVisibility(customid, id) {
+    todolist.forEach(item => {
+        if (item.id === id) {
+            item.checked = !item.checked
+        }
+    })
+    document.getElementById(customid).classList.toggle("hidden")
 }
 
 function generateCustomId(taskitem) {
@@ -78,10 +92,11 @@ function generateCustomId(taskitem) {
 
 function removeTodo(todoid) {
     document.getElementById(todoid).remove()
+    deleteTodoItem(todoid)
 }
 
 function receiveList() {
     todolist.forEach((item)=>{
-        addToDo(item.description)
+        addToDo(item)
     })
 }
