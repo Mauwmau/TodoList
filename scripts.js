@@ -15,9 +15,9 @@ function createTodoItem(desc) {
         description: desc
     }
 
-    console.log(desc, newitem)
-
     todolist.push(newitem)
+
+    return newitem
 }
 
 function deleteTodoItem(itemId) {
@@ -36,25 +36,28 @@ function readUserInput() {
 // Reads user task and adds to the list, activated when the form is submited
 function handleSubmit(){
     const taskname = readUserInput()
-    // addToDo(taskname)
-    createTodoItem(taskname)
-    console.log(todolist);
+    const newtask = createTodoItem(taskname)
+    addToDo(newtask)
 }
 
 // Creates the elements that will be added to the DOM.
 // params:
 //  - itemname: string that describes the task
-function addToDo(itemname) {
-    if(itemname != null && itemname != ""){
+function addToDo(itemobj) {
+    const {id, checked, description} = itemobj
+    const customid = generateCustomId(itemobj)
+    console.log(id, checked, description)
+    if(itemobj != null && description != ""){
         let newitembox = document.createElement("INPUT")
         newitembox.setAttribute("type", "checkbox")
         newitembox.setAttribute("value", false)
-        newitembox.addEventListener("input", () => {removeTodo(itemname)})
+        newitembox.addEventListener("input", () => {removeTodo(customid)})
 
         let newitemname = document.createElement("P")
-        newitemname.innerHTML = itemname
+        newitemname.innerHTML = description
 
         let licontainer = document.createElement("LI")
+        licontainer.id = customid
         licontainer.appendChild(newitembox)
         licontainer.appendChild(newitemname)
 
@@ -63,8 +66,18 @@ function addToDo(itemname) {
     }
 }
 
-function removeTodo(param) {
-    alert("Remover " + param)
+function generateCustomId(taskitem) {
+    const {id, description} = taskitem
+
+    const wordlist = description.split(" ")
+
+    const initials = wordlist.map(word => word[0])
+
+    return initials.join("") + id.toString()
+}
+
+function removeTodo(todoid) {
+    document.getElementById(todoid).remove()
 }
 
 function receiveList() {
