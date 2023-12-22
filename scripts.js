@@ -29,6 +29,7 @@ function addToList(userString) {
     const todoItem = generateItem(sessionListSize, userString)
 
     todolist.push(todoItem)
+    return todoItem
 }
 
 // Removes an item from the list using the item id
@@ -86,8 +87,12 @@ function handleSubmit(event) {
     // Don't let the page reload/refresh upon form submission
     event.preventDefault()
 
-    // Clears the input field
     const userInput = document.getElementById(userInputId)
+
+    const createdItem = addToList(userInput.value) // Add info to data structure
+    createListItems(createdItem)
+
+    // Clears the input field
     userInput.value = ""
 }
 function createListItems(itemObject) {
@@ -97,7 +102,10 @@ function createListItems(itemObject) {
     const checkbox = document.createElement("input")
     checkbox.setAttribute("type", "checkbox")
     checkbox.value = checked
-    checkbox.addEventListener("change",() => toggleItemVisibility(customId))
+    checkbox.addEventListener("change",() => {
+        toggleItemVisibility(customId)
+        updateFromList(id, !checked)
+    })
 
     // Simply display text
     const textbox = document.createElement("p")
@@ -106,7 +114,10 @@ function createListItems(itemObject) {
     // When pressed should completely delete the parent element
     const deleteButton = document.createElement("button")
     deleteButton.innerHTML = "Deletar Tarefa"
-    deleteButton.addEventListener("click", () => deleteListItems(customId))
+    deleteButton.addEventListener("click", () => {
+        deleteListItems(customId)
+        removeFromList(id)
+    })
 
     // Is the main container
     const listItem = document.createElement("li")
