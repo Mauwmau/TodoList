@@ -1,102 +1,130 @@
-let todolist = [] // Declaration of a list, will store the to-do's
+//  -----------  Data structure or similar  -----------
 
+let todolist = []
 let counter = 0
-// How a to-do item should look like
-// const todoitem = {
-//     id: 0, // Number
-//     checked: false, // Boolean
-//     description: "Name of a chore" // String
-// }
 
-function createTodoItem(desc) {
-    const newitem = {
-        id: todolist.length + 1 + counter,
+function generateItem(id, description) {
+
+    const idString = generateCustomId(id, description)
+
+    const itemObject = {
+        id: id,
+        description: description,
         checked: false,
-        description: desc
+        customId: idString
     }
 
-    todolist.push(newitem)
-
-    return newitem
+    return itemObject
 }
 
-function deleteTodoItem(itemId) {
-    todolist = todolist.filter((item)=>item.id !== itemId)
+function generateCustomId(numericId, wordListString) {
+    const wordList = wordListString.split(" ")
+    const initialsList = wordList.map((word)=> word[0])
+    return initialsList.join("") + numericId.toString()
+}
+
+// Adds an item to the list
+function addToList(userString) {
+    const sessionListSize = todolist.length + counter
+    const todoItem = generateItem(sessionListSize, userString)
+
+    todolist.push(todoItem)
+}
+
+// Removes an item from the list using the item id
+function removeFromList(id) {
+    todolist = todolist.filter((item) => item.id !== id)
     counter = counter + 1
 }
 
-// Gets the text field and returns the string written by the user
-function readUserInput() {
-    const userInput = document.getElementById("chorename")
-    const userStr = userInput.value
-    userInput.value = ""
-    return userStr
-}
+// Updates the values from an especific item in the list, checking for the item id
+function updateFromList(itemId, newChecked, newDescription, newId) {
+    todolist.forEach((item)=>{
+        if (item.id === itemId) {
+            if (typeof newChecked === "boolean") {
+                item.checked = newChecked
+            }
 
-// Reads user task and adds to the list, activated when the form is submited
-function handleSubmit(){
-    const taskname = readUserInput()
-    const newtask = createTodoItem(taskname)
-    addToDo(newtask)
-}
+            if (typeof newDescription === "string") {
+                item.description = newDescription
+            }
 
-// Creates the elements that will be added to the DOM.
-// params:
-//  - itemname: string that describes the task
-function addToDo(itemobj) {
-    const {id, checked, description} = itemobj
-    const customid = generateCustomId(itemobj)
-    console.log(id, checked, description)
-    if(itemobj != null && description != ""){
-        let newitembox = document.createElement("INPUT")
-        newitembox.setAttribute("type", "checkbox")
-        newitembox.setAttribute("value", false)
-        newitembox.addEventListener("input", () => {toggleVisibility(customid, id)})
-
-        let newitemname = document.createElement("P")
-        newitemname.innerHTML = description
-
-        let deletebutton = document.createElement("BUTTON")
-        deletebutton.addEventListener("click", () => {removeTodo(customid)})
-        deletebutton.innerHTML = "Apagar tarefa"
-
-        let licontainer = document.createElement("LI")
-        licontainer.id = customid
-        licontainer.appendChild(newitembox)
-        licontainer.appendChild(newitemname)
-        licontainer.appendChild(deletebutton)
-
-        let domList = document.getElementById("mylist")
-        domList.appendChild(licontainer)
-    }
-}
-
-function toggleVisibility(customid, id) {
-    todolist.forEach(item => {
-        if (item.id === id) {
-            item.checked = !item.checked
+            if (typeof newId === "number") {
+                item.id = newId
+            }
         }
     })
-    document.getElementById(customid).classList.toggle("hidden")
 }
 
-function generateCustomId(taskitem) {
-    const {id, description} = taskitem
-
-    const wordlist = description.split(" ")
-
-    const initials = wordlist.map(word => word[0])
-
-    return initials.join("") + id.toString()
+// Returns an item from the list using the specified id
+function readFromList(itemId) {
+    const listItem = todolist.filter(item => item.id === itemId)
+    return listItem[0]
 }
 
-function removeTodo(todoid) {
-    document.getElementById(todoid).remove()
-    deleteTodoItem(todoid)
+// Returns an item from the list using the specified custom id
+function readFromListCI(itemCustomId) {
+    const listItem = todolist.filter(item => item.customId === itemCustomId)
+    return listItem[0]
 }
 
-function receiveList() {
-    todolist.forEach((item)=>{
-        addToDo(item)
-    })
+
+// -----------  DOM elements and visuals  -----------
+
+document.addEventListener("DOMContentLoaded", onContentLoaded)
+
+const userInputId = "chorename"
+const userFormId = "fform"
+const userListContainer = "mylist"
+
+function onContentLoaded() {
+    const userForm = document.getElementById(userFormId)
+    userForm.addEventListener("submit", (event) => handleSubmit(event))
+}
+
+function handleSubmit(event) {
+    // Don't let the page reload/refresh upon form submission
+    event.preventDefault()
+
+    // Clears the input field
+    const userInput = document.getElementById(userInputId)
+    userInput.value = ""
+}
+function createListItems(itemObject) {
+    const {id, description, checked, customId} = itemObject
+
+    // When pressed should toggle visibility
+    const checkbox = document.createElement("input")
+    checkbox.setAttribute("type", "checkbox")
+    checkbox.value = checked
+    checkbox.addEventListener("change",() => toggleItemVisibility(customId))
+
+    // Simply display text
+    const textbox = document.createElement("p")
+    textbox.innerHTML = description
+
+    // When pressed should completely delete the parent element
+    const deleteButton = document.createElement("button")
+    deleteButton.innerHTML = "Deletar Tarefa"
+    deleteButton.addEventListener("click", () => deleteListItems(customId))
+
+    // Is the main container
+    const listItem = document.createElement("li")
+    listItem.id = customId
+    listItem.appendChild(checkbox)
+    listItem.appendChild(textbox)
+    listItem.appendChild(deleteButton)
+
+    const listContainer = document.getElementById(userListContainer)
+    listContainer.appendChild(listItem)
+}
+
+function deleteListItems(itemCustomId) {
+    const myItem = document.getElementById(itemCustomId)
+    myItem.remove()
+}
+
+function toggleItemVisibility(itemCustomId) {
+    const myItem = document.getElementById(itemCustomId)
+    myItem.classList.toggle("hidden")
 }
