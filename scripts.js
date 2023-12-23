@@ -114,6 +114,7 @@ function createListItems(itemObject) {
     // When pressed should completely delete the parent element
     const deleteButton = document.createElement("button")
     deleteButton.innerHTML = "Deletar Tarefa"
+    deleteButton.classList.add("delete-button")
     deleteButton.addEventListener("click", () => {
         deleteListItems(customId)
         removeFromList(id)
@@ -122,6 +123,8 @@ function createListItems(itemObject) {
     // Is the main container
     const listItem = document.createElement("li")
     listItem.id = customId
+    listItem.classList.add("row")
+    listItem.classList.add("list-item")
     listItem.appendChild(checkbox)
     listItem.appendChild(textbox)
     listItem.appendChild(deleteButton)
@@ -138,4 +141,5 @@ function deleteListItems(itemCustomId) {
 function toggleItemVisibility(itemCustomId) {
     const myItem = document.getElementById(itemCustomId)
     myItem.classList.toggle("hidden")
+    myItem.classList.toggle("row")
 }
